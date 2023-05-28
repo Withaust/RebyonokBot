@@ -18,6 +18,7 @@ config/icon="res://icon.png"
 
 Logger="*res://Systems/Logger.tscn"
 Closer="*res://Systems/Closer.tscn"
+Version="*res://Systems/Version.tscn"
 Credentials="*res://Systems/Credentials.tscn"
 Vk="*res://Systems/Vk.tscn"
 

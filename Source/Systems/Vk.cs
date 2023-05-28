@@ -11,46 +11,69 @@ using VkNet.Model.RequestParams;
 
 public class Vk : ISystem<Vk>
 {
-	public bool MyRemoteCertificateValidationCallback(System.Object sender,
-		System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-	{
-		return true;
-	}
+    public bool MyRemoteCertificateValidationCallback(System.Object sender,
+        System.Security.Cryptography.X509Certificates.X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+        return true;
+    }
 
-	private VkApi api;
-	private MessagesSendParams sendParams;
+    private VkApi api;
+    private MessagesSendParams sendParams;
 
-	public override void OnReady()
-	{
-		GD.Randomize();
-		ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
+    public override void OnReady()
+    {
+        GD.Randomize();
+        ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
 
-		api = new VkApi();
+        api = new VkApi();
 
-		api.Authorize(new ApiAuthParams
-		{
-			AccessToken = (string)Credentials.Get().Fields["token"]
-		});
-		//Console.WriteLine(api.Token);
+        api.Authorize(new ApiAuthParams
+        {
+            AccessToken = (string)Credentials.Get().Fields["token"]
+        });
 
-		sendParams = new MessagesSendParams()
-		{
-			ChatId = 1,
-			Message = "Delicious\nBottom text",
-			RandomId = GD.Randi()
-		};
+        CheckVersion();
+    }
 
-		var group = api.Groups.GetById(null, (string)Credentials.Get().Fields["group_id"], GroupsFields.All).FirstOrDefault();
-		if (group == null)
-		{
-			return;
-		}
+    public void CheckVersion()
+    {
+        var getHistory = api.Messages.GetHistory(new MessagesGetHistoryParams
+        {
+            UserId = Convert.ToInt64((string)Credentials.Get().Fields["user_id"]),
+            Count = 1,
+        });
 
-		//sendParams.Message = group.Name;
-	}
+        if (getHistory.Messages.Count() == 0 || getHistory.Messages.First().Text != Version.Get().Commit)
+        {
+            SendMessageSelf(Version.Get().Commit);
+            SendMessage("Я обновился!\n\n" + Version.Get().VersionText);
+        }
+    }
 
-	public override void OnShutdown()
-	{
-		api.Messages.Send(sendParams);
-	}
+    public override void OnShutdown()
+    {
+        //SendMessage("Delicious\nBottom text");
+    }
+
+    public void SendMessage(string Text)
+    {
+        sendParams = new MessagesSendParams()
+        {
+            ChatId = 1,
+            Message = Text,
+            RandomId = GD.Randi()
+        };
+        api.Messages.Send(sendParams);
+    }
+
+    public void SendMessageSelf(string Text)
+    {
+        sendParams = new MessagesSendParams()
+        {
+            UserId = Convert.ToInt64((string)Credentials.Get().Fields["user_id"]),
+            Message = Text,
+            RandomId = GD.Randi()
+        };
+        api.Messages.Send(sendParams);
+    }
 }
