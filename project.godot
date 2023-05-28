@@ -21,6 +21,7 @@ Closer="*res://Systems/Closer.tscn"
 Version="*res://Systems/Version.tscn"
 Credentials="*res://Systems/Credentials.tscn"
 Vk="*res://Systems/Vk.tscn"
+TestImage="*res://Systems/TestImage.tscn"
 
 [display]
 

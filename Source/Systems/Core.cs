@@ -4,9 +4,6 @@ using System.Collections.Generic;
 
 public class Core : Node
 {
-	private TextureRect Rebyonok;
-	private float RebyonokCounter;
-
 	public static Dictionary<Type, ISystemEvents> SystemsDict;
 	public static List<ISystemEvents> SystemsList;
 
@@ -38,22 +35,6 @@ public class Core : Node
 			SystemsList.RemoveAt(i);
 			SystemsDict.Remove(Target.GetType());
 		}
-	}
-
-	public override void _Ready()
-	{
-		Rebyonok = GetNode<TextureRect>("Rebyonok");
-	}
-
-	public override void _Process(float delta)
-	{
-		RebyonokCounter += delta;
-		if(RebyonokCounter < 1.0f)
-		{
-			return;
-		}
-		RebyonokCounter = 0.0f;
-		Rebyonok.FlipH = !Rebyonok.FlipH;
 	}
 
 	public override void _ExitTree()
