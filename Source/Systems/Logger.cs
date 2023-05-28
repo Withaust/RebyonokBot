@@ -8,19 +8,26 @@ public class Logger : ISystem<Logger>
 {
 	public event OnError OnError;
 
+	private DateTime Launch;
+
+	private string GetLoggerTime()
+	{
+		return (DateTime.Now - Launch).ToString("hh':'mm':'ss");
+	}
+
 	public void Log(string Text)
 	{
-		GD.Print("[" + Time.GetTimeStringFromSystem() + "] " + Text);
+		GD.Print("[" + GetLoggerTime() + "] " + Text);
 	}
 
 	public void Warning(string Text)
 	{
-		GD.PushWarning("[" + Time.GetTimeStringFromSystem() + "] " + Text);
+		GD.PushWarning("[" + GetLoggerTime() + "] " + Text);
 	}
 
 	public void Error(string Text, bool Blocking = false, bool Quit = false)
 	{
-		GD.PushError("[" + Time.GetTimeStringFromSystem() + "] " + Text);
+		GD.PushError("[" + GetLoggerTime() + "] " + Text);
 		OnError?.Invoke(Text);
 		if (Blocking)
 		{
@@ -40,6 +47,8 @@ public class Logger : ISystem<Logger>
 
 	public override void OnReady()
 	{
+		Launch = DateTime.Now;
+
 		Log("Starter RebyonokBot successfully");
 	}
 

@@ -1,3 +1,3 @@
 @echo off
 cd Godot
-Godot.exe
+Godot.exe --editor --path ..
