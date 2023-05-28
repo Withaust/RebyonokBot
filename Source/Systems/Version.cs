@@ -26,7 +26,7 @@ public class Version : ISystem<Version>
     public override void OnReady()
     {
         VersionText = RunEvaluate();
-        Commit = VersionText.Split(" ")[1];
+        Commit = VersionText.Split("\n")[0].Split(" ")[1];
     }
 
     public override void OnShutdown()
