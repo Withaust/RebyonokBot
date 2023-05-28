@@ -12,7 +12,7 @@ public class Version : ISystem<Version>
         using (Process cmd = new Process())
         {
             cmd.StartInfo.FileName = "git.exe";
-            cmd.StartInfo.Arguments = "show --summary";
+            cmd.StartInfo.Arguments = "show --name-status";
             cmd.StartInfo.CreateNoWindow = true;
             cmd.StartInfo.UseShellExecute = false;
             cmd.StartInfo.RedirectStandardOutput = true;
