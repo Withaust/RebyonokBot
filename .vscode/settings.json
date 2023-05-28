@@ -1,0 +1,23 @@
+{
+    "files.exclude": 
+    {
+        ".import/": true,
+        ".mono/": true,
+        "Godot/": true,
+        "default_env.tres": true,
+        "icon.png": true,
+        "icon.png.import": true,
+        "Main.tscn": true,
+        "Godot.cmd": true,
+        "DebugRebyonok.cmd": true,
+        "ReleaseRebyonok.cmd": true,
+        "CloseRebyonok.cmd": true,
+        "RebyonokBot.csproj": true,
+        "RebyonokBot.sln": true,
+        "Systems/": true,
+        ".gitignore": true,
+        "LICENSE.md": true,
+        "README.md": true,
+        "*.tscn": true
+    }
+}
