@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 public class Closer : ISystem<Logger>
 {
-    public int Port = 49898;
+    public static int Port = 49898;
 
     private TcpListener Listener;
     private Task ListenTask;
@@ -24,7 +24,6 @@ public class Closer : ISystem<Logger>
 
     public override bool OnReady()
     {
-        Token = new CancellationTokenSource();
         try
         {
             Listener = new TcpListener(IPAddress.Any, Port);
@@ -37,6 +36,7 @@ public class Closer : ISystem<Logger>
             return false;
         }
         Logger.Get().Log("Listening for graceful TCP shutdown at port " + Port);
+        Token = new CancellationTokenSource();
         ListenTask = Task.Run((Func<Task>)Listen, Token.Token);
         return true;
     }

@@ -2,11 +2,9 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public delegate void OnError(string Text);
-
 public class Logger : ISystem<Logger>
 {
-    public event OnError OnError;
+    public Event<string> OnError;
 
     private DateTime Launch;
 
@@ -28,7 +26,7 @@ public class Logger : ISystem<Logger>
     public void Error(string Text, bool Blocking = false, bool Quit = false)
     {
         GD.PushError("[" + GetLoggerTime() + "] " + Text);
-        OnError?.Invoke(Text);
+        OnError.Invoke(Text);
         if (Blocking)
         {
             using (Process cmd = new Process())
@@ -47,17 +45,17 @@ public class Logger : ISystem<Logger>
         }
     }
 
-    public void OnCoreException(CoreExceptionType Type, Exception Exception)
+    public bool OnCoreException(CoreExceptionType Type, Exception Exception)
     {
         string Result;
         switch (Type)
         {
-            default:
             case CoreExceptionType.OnReady:
                 {
                     Result = "OnReady got an exception:\n";
                     break;
                 }
+            default:
             case CoreExceptionType.OnProcess:
                 {
                     Result = "OnProcess got an exception:\n";
@@ -71,13 +69,15 @@ public class Logger : ISystem<Logger>
         }
         Result += Exception.Message + "\n" + Exception.StackTrace;
         Error(Result);
+        return true;
     }
 
     public override bool OnReady()
     {
+        OnError = new Event<string>();
         Launch = DateTime.Now;
-
-        Core.Instance.OnException += OnCoreException;
+        
+        Core.Instance.OnException.Register(OnCoreException);
 
         Log("Starter RebyonokBot successfully");
         return true;

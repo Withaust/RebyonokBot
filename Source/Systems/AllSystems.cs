@@ -11,5 +11,6 @@ class AllSystems
         Core.Register<Credentials>();
         Core.Register<Vk>();
         Core.Register<TestImage>(true);
+        Core.Register<MessageInput>();
     }
 }

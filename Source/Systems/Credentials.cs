@@ -25,7 +25,7 @@ public class Credentials : ISystem<Credentials>
 		}
 
 		Fields = (Godot.Collections.Dictionary)ParseResult.Result;
-		Engine.TargetFps = Convert.ToInt32((string)Fields["tps"]);
+		Engine.TargetFps = Convert.ToInt32((string)Fields["fps"]);
 		return true;
 	}
 

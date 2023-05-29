@@ -12,10 +12,8 @@ public class Reflector : ISystem<Reflector>
     public override bool OnReady()
     {
         Assemblies = new Dictionary<string, Assembly>();
-
-        NamedTypes = new Dictionary<string, Type>();
+        NamedTypes  = new Dictionary<string, Type>();
         ActualTypes = new Dictionary<Type, string>();
-
         AttributedMethods = new Dictionary<Type, List<Tuple<Type, MethodInfo>>>();
 
         Assembly[] NewAssemblies = AppDomain.CurrentDomain.GetAssemblies();
