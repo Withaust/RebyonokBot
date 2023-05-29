@@ -32,6 +32,11 @@ public class Closer : ISystem<Logger>
         return true;
     }
 
+    public override bool OnProcess(float Delta)
+    {
+        return true;
+    }
+
     public override bool OnShutdown()
     {
         Token.Cancel();

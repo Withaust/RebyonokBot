@@ -25,6 +25,12 @@ public class Credentials : ISystem<Credentials>
 		}
 
 		Fields = (Godot.Collections.Dictionary)ParseResult.Result;
+		Engine.TargetFps = Convert.ToInt32((string)Fields["tps"]);
+		return true;
+	}
+
+	public override bool OnProcess(float Delta)
+	{
 		return true;
 	}
 

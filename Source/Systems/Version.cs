@@ -29,6 +29,11 @@ public class Version : ISystem<Version>
         return true;
     }
 
+    public override bool OnProcess(float Delta)
+    {
+        return true;
+    }
+
     public override bool OnShutdown()
     {
         return true;

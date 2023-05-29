@@ -2,52 +2,94 @@ using Godot;
 using System;
 using System.Collections.Generic;
 
+public enum CoreExceptionType
+{
+    OnReady,
+    OnProcess,
+    OnShutdown
+}
+
+public delegate void OnCoreException(CoreExceptionType Type, Exception Exception);
+
 public class Core : Node
 {
-	public static Dictionary<Type, ISystemEvents> SystemsDict;
-	public static List<ISystemEvents> SystemsList;
+    public static Core Instance { get; private set; }
 
-	public static bool Initialized = false;
-	public static bool Deinitialized = false;
-	public static void Initialize()
-	{
-		if (Initialized)
-		{
-			return;
-		}
-		Initialized = true;
-		SystemsDict = new Dictionary<Type, ISystemEvents>();
-		SystemsList = new List<ISystemEvents>();
-	}
+    public Dictionary<Type, ISystemEvents> SystemsDict;
+    public List<ISystemEvents> SystemsList;
 
-	public static void Deinitialize()
-	{
-		if(Deinitialized)
-		{
-			return;
-		}
-		Deinitialized = true;
+    public event OnCoreException OnException;
 
-		for(int i = SystemsList.Count - 1; i >= 0; i--)
-		{
-			ISystemEvents Target = SystemsList[i];
-			if(!Target.OnShutdown())
-			{
-				GD.PushError(Target.GetType().Name + " failed to execute OnShutdown");
-			}
-			SystemsList.RemoveAt(i);
-			SystemsDict.Remove(Target.GetType());
-		}
-	}
+    public override void _Ready()
+    {
+        Instance = this;
+        try
+        {
+            SystemsDict = new Dictionary<Type, ISystemEvents>();
+            SystemsList = new List<ISystemEvents>();
+            AllSystems.Register();
+        }
+        catch (Exception Exception)
+        {
+            OnException?.Invoke(CoreExceptionType.OnReady, Exception);
+        }
+    }
 
-	public override void _ExitTree()
-	{
-		Deinitialize();
-	}
+    public override void _Process(float Delta)
+    {
+        try
+        {
+            for (int i = 0; i < SystemsList.Count; i++)
+            {
+                ISystemEvents Target = SystemsList[i];
+                if (!Target.OnProcess(Delta))
+                {
+                    GD.PushError(Target.GetType().Name + " failed to execute OnDelta");
+                }
+            }
+        }
+        catch (Exception Exception)
+        {
+            OnException?.Invoke(CoreExceptionType.OnProcess, Exception);
+        }
+    }
 
-	public static void Register(ISystemEvents System)
-	{
-		SystemsDict[System.GetType()] = System;
-		SystemsList.Add(System);
-	}
+    public override void _ExitTree()
+    {
+        try
+        {
+            for (int i = SystemsList.Count - 1; i >= 0; i--)
+            {
+                ISystemEvents Target = SystemsList[i];
+                if (!Target.OnShutdown())
+                {
+                    GD.PushError(Target.GetType().Name + " failed to execute OnShutdown");
+                }
+                SystemsList.RemoveAt(i);
+                SystemsDict.Remove(Target.GetType());
+            }
+        }
+        catch (Exception Exception)
+        {
+            OnException?.Invoke(CoreExceptionType.OnShutdown, Exception);
+        }
+    }
+
+    public void Register<T>(bool LoadScene = false) where T : Node, ISystemEvents, new()
+    {
+        T NewSystem = new T();
+        SystemsDict[NewSystem.GetType()] = NewSystem;
+        SystemsList.Add(NewSystem);
+        NewSystem.Name = typeof(T).Name;
+        AddChild(NewSystem);
+        if (LoadScene)
+        {
+            PackedScene NewScene = ResourceLoader.Load<PackedScene>("res://Systems/" + typeof(T).Name + ".tscn");
+            NewSystem.AddChild(NewScene.Instance());
+        }
+        if (!NewSystem.OnReady())
+        {
+            GD.PushError(typeof(T).Name + " failed to execute OnReady");
+        }
+    }
 }

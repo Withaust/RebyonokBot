@@ -19,6 +19,7 @@ public class Vk : ISystem<Vk>
 
     private VkApi api;
     private MessagesSendParams sendParams;
+    private bool Authorized = false;
 
     public override bool OnReady()
     {
@@ -31,8 +32,20 @@ public class Vk : ISystem<Vk>
         {
             AccessToken = (string)Credentials.Get().Fields["token"]
         });
+        Authorized = true;
 
         CheckVersion();
+        return true;
+    }
+
+    public override bool OnProcess(float Delta)
+    {
+        return true;
+    }
+    
+    public override bool OnShutdown()
+    {
+        //SendMessage("Delicious\nBottom text");
         return true;
     }
 
@@ -50,12 +63,6 @@ public class Vk : ISystem<Vk>
             SendMessage("Я обновился!\n" + 
             "https://github.com/Withaust/RebyonokBot/commit/" + Version.Get().Commit);
         }
-    }
-
-    public override bool OnShutdown()
-    {
-        //SendMessage("Delicious\nBottom text");
-        return true;
     }
 
     public void SendMessage(string Text)

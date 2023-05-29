@@ -47,11 +47,45 @@ public class Logger : ISystem<Logger>
         }
     }
 
+    public void OnCoreException(CoreExceptionType Type, Exception Exception)
+    {
+        string Result;
+        switch (Type)
+        {
+            default:
+            case CoreExceptionType.OnReady:
+                {
+                    Result = "OnReady got an exception:\n";
+                    break;
+                }
+            case CoreExceptionType.OnProcess:
+                {
+                    Result = "OnProcess got an exception:\n";
+                    break;
+                }
+            case CoreExceptionType.OnShutdown:
+                {
+                    Result = "OnShutdown got an exception:\n";
+                    break;
+                }
+        }
+        Result += Exception.Message + "\n" +
+        Exception.StackTrace;
+        Error(Result);
+    }
+
     public override bool OnReady()
     {
         Launch = DateTime.Now;
 
+        Core.Instance.OnException += OnCoreException;
+
         Log("Starter RebyonokBot successfully");
+        return true;
+    }
+
+    public override bool OnProcess(float Delta)
+    {
         return true;
     }
 

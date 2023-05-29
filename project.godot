@@ -14,14 +14,9 @@ config/name="RebyonokBot"
 run/main_scene="res://Core.tscn"
 config/icon="res://icon.png"
 
-[autoload]
+[debug]
 
-Logger="*res://Systems/Logger.tscn"
-Closer="*res://Systems/Closer.tscn"
-Version="*res://Systems/Version.tscn"
-Credentials="*res://Systems/Credentials.tscn"
-Vk="*res://Systems/Vk.tscn"
-TestImage="*res://Systems/TestImage.tscn"
+settings/stdout/print_fps=true
 
 [display]
 

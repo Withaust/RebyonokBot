@@ -38,6 +38,11 @@ public class Reflector : ISystem<Reflector>
         return true;
     }
 
+    public override bool OnProcess(float Delta)
+    {
+        return true;
+    }
+
     public override bool OnShutdown()
     {
         return true;
