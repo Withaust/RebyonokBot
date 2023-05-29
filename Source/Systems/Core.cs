@@ -33,6 +33,7 @@ public class Core : Node
         {
             OnException?.Invoke(CoreExceptionType.OnReady, Exception);
         }
+        Logger.Get().Log("RebyonokBot is now fully operational");
     }
 
     public override void _Process(float Delta)

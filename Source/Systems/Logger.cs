@@ -69,8 +69,7 @@ public class Logger : ISystem<Logger>
                     break;
                 }
         }
-        Result += Exception.Message + "\n" +
-        Exception.StackTrace;
+        Result += Exception.Message + "\n" + Exception.StackTrace;
         Error(Result);
     }
 

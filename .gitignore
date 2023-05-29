@@ -17,4 +17,5 @@ Godot/editor_data
 CREDENTIALS.json
 # MOST IMPORTANT, NEVER COMMIT
 
-test.png
+test.*
+Test.*

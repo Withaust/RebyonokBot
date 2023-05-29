@@ -25,8 +25,17 @@ public class Closer : ISystem<Logger>
     public override bool OnReady()
     {
         Token = new CancellationTokenSource();
-        Listener = new TcpListener(IPAddress.Any, Port);
-        Listener.Start();
+        try
+        {
+            Listener = new TcpListener(IPAddress.Any, Port);
+            Listener.Start();
+        }
+        catch (Exception e)
+        {
+            Logger.Get().Error("Failed to create Closer listener. Is another RebyonokBot instance running?. " +
+            e.Message + "\n" + e.StackTrace);
+            return false;
+        }
         Logger.Get().Log("Listening for graceful TCP shutdown at port " + Port);
         ListenTask = Task.Run((Func<Task>)Listen, Token.Token);
         return true;
