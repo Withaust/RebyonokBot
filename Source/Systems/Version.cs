@@ -3,7 +3,6 @@ using System.Diagnostics;
 
 public class Version : ISystem<Version>
 {
-    public string VersionText { get; private set; }
     public string Commit { get; private set; }
 
     string RunEvaluate()
@@ -25,7 +24,7 @@ public class Version : ISystem<Version>
 
     public override bool OnReady()
     {
-        VersionText = RunEvaluate();
+        string VersionText = RunEvaluate();
         Commit = VersionText.Split("\n")[0].Split(" ")[1];
         return true;
     }

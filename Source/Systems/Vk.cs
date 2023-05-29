@@ -48,8 +48,7 @@ public class Vk : ISystem<Vk>
         {
             SendMessageSelf(Version.Get().Commit);
             SendMessage("Я обновился!\n" + 
-            "https://github.com/Withaust/RebyonokBot/commit/" + Version.Get().Commit + "\n" +
-            Version.Get().VersionText);
+            "https://github.com/Withaust/RebyonokBot/commit/" + Version.Get().Commit);
         }
     }
 

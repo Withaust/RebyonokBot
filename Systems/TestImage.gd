@@ -15,7 +15,7 @@ func save():
 
 	# Flip it on the y-axis (because it's flipped).
 	img.flip_y()
-	img.save_png("test.png")
+	#img.save_png("test.png")
 
 
 # Called when the node enters the scene tree for the first time.
