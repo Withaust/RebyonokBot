@@ -23,14 +23,15 @@ public class Version : ISystem<Version>
         return Result;
     }
 
-    public override void OnReady()
+    public override bool OnReady()
     {
         VersionText = RunEvaluate();
         Commit = VersionText.Split("\n")[0].Split(" ")[1];
+        return true;
     }
 
-    public override void OnShutdown()
+    public override bool OnShutdown()
     {
-
+        return true;
     }
 }

@@ -47,15 +47,17 @@ public class Logger : ISystem<Logger>
         }
     }
 
-    public override void OnReady()
+    public override bool OnReady()
     {
         Launch = DateTime.Now;
 
         Log("Starter RebyonokBot successfully");
+        return true;
     }
 
-    public override void OnShutdown()
+    public override bool OnShutdown()
     {
         Log("Closed RebyonokBot successfully");
+        return true;
     }
 }

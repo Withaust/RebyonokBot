@@ -31,7 +31,10 @@ public class Core : Node
 		for(int i = SystemsList.Count - 1; i >= 0; i--)
 		{
 			ISystemEvents Target = SystemsList[i];
-			Target.OnShutdown();
+			if(!Target.OnShutdown())
+			{
+				GD.PushError(Target.GetType().Name + " failed to execute OnShutdown");
+			}
 			SystemsList.RemoveAt(i);
 			SystemsDict.Remove(Target.GetType());
 		}

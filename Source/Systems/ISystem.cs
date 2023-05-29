@@ -2,23 +2,26 @@ using Godot;
 
 public interface ISystemEvents
 {
-    void OnReady();
-    void OnShutdown();
+    bool OnReady();
+    bool OnShutdown();
 }
 
 public abstract class ISystem<T> : Node, ISystemEvents where T : Node
 {
     private static Node Root;
 
-    public abstract void OnReady();
-    public abstract void OnShutdown();
+    public abstract bool OnReady();
+    public abstract bool OnShutdown();
     
     public override void _Ready()
     {
         Core.Initialize();
         Core.Register(this);
         Root = GetTree().Root;
-        OnReady();
+        if(!OnReady())
+        {
+            GD.PushError(GetType().Name + " failed to execute OnReady");
+        }
     }
 
     public override void _ExitTree()

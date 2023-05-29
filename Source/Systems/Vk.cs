@@ -20,7 +20,7 @@ public class Vk : ISystem<Vk>
     private VkApi api;
     private MessagesSendParams sendParams;
 
-    public override void OnReady()
+    public override bool OnReady()
     {
         GD.Randomize();
         ServicePointManager.ServerCertificateValidationCallback = MyRemoteCertificateValidationCallback;
@@ -33,6 +33,7 @@ public class Vk : ISystem<Vk>
         });
 
         CheckVersion();
+        return true;
     }
 
     public void CheckVersion()
@@ -46,13 +47,16 @@ public class Vk : ISystem<Vk>
         if (getHistory.Messages.Count() == 0 || getHistory.Messages.First().Text != Version.Get().Commit)
         {
             SendMessageSelf(Version.Get().Commit);
-            SendMessage("Я обновился!\n\n" + Version.Get().VersionText);
+            SendMessage("Я обновился!\n" + 
+            "https://github.com/Withaust/RebyonokBot/commit/" + Version.Get().Commit + "\n" +
+            Version.Get().VersionText);
         }
     }
 
-    public override void OnShutdown()
+    public override bool OnShutdown()
     {
         //SendMessage("Delicious\nBottom text");
+        return true;
     }
 
     public void SendMessage(string Text)

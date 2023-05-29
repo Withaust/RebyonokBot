@@ -22,17 +22,19 @@ public class Closer : ISystem<Logger>
         GetTree().Quit(0);
     }
 
-    public override void OnReady()
+    public override bool OnReady()
     {
         Token = new CancellationTokenSource();
         Listener = new TcpListener(IPAddress.Any, Port);
         Listener.Start();
         Logger.Get().Log("Listening for graceful TCP shutdown at port " + Port);
         ListenTask = Task.Run((Func<Task>)Listen, Token.Token);
+        return true;
     }
 
-    public override void OnShutdown()
+    public override bool OnShutdown()
     {
         Token.Cancel();
+        return true;
     }
 }
