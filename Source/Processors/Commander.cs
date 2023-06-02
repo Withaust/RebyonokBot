@@ -91,7 +91,7 @@ public class Commander : INode<Commander>
 
         foreach (var Method in Reflector.GetAttributedMethods(typeof(Cmd)))
         {
-            if (Method.Item2.ReturnType != typeof(string)) { continue; }
+            if (Method.Item2.ReturnType != typeof(SentMessage)) { continue; }
             Cmd Cmd = (Cmd)Method.Item2.GetCustomAttribute(typeof(Cmd)); if (Cmd == null) { continue; }
             CmdArgs Args = (CmdArgs)Method.Item2.GetCustomAttribute(typeof(CmdArgs)); if (Args == null) { continue; }
             CmdShort Short = (CmdShort)Method.Item2.GetCustomAttribute(typeof(CmdShort)); if (Short == null) { continue; }
@@ -217,10 +217,10 @@ public class Commander : INode<Commander>
 
         if (Entry.Item2 == null)
         {
-            object Result = Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), null);
-            if (Result != null)
+            SentMessage Result = (SentMessage)Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), null);
+            if (Result != null && Result != default)
             {
-                MessageSender.Get().SendMessage((string)Result);
+                MessageSender.Get().SendMessage(Result);
             }
             return false;
         }
@@ -275,10 +275,10 @@ public class Commander : INode<Commander>
 
         if (Valid)
         {
-            object Result = Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), ParsedObjects.ToArray());
-            if (Result != null)
+            SentMessage Result = (SentMessage)Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), ParsedObjects.ToArray());
+            if (Result != null && Result != default)
             {
-                MessageSender.Get().SendMessage((string)Result);
+                MessageSender.Get().SendMessage(Result);
             }
         }
         else

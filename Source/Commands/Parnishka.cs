@@ -1,14 +1,14 @@
 
-class Eblan : INode<Eblan>
+class Parnishka : INode<Eblan>
 {
-    [Cmd("eblan")]
+    [Cmd("parniska")]
     [CmdArgs(null)]
     // vvv Different languages vvv
-    [CmdShort("e", "е")]
-    [CmdHelp("Генератор ебланов")]
+    [CmdShort("p", "парнишка", "ребёнок")]
+    [CmdHelp("Генератор парнишек")]
     public SentMessage Execute()
     {
-        return new SentMessage() { Text = "Еблан .. TODO" };
+        return new SentMessage() { Text = "Лови", Attachment = Photos.Get().GroupChat.Upload("icon.png") };
     }
 
     public override bool OnReady()

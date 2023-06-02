@@ -5,14 +5,14 @@ class Help : INode<Eblan>
     [CmdArgs(null)]
     [CmdShort("команды", "cmd", "h")]
     [CmdHelp("Список команд")]
-    public string Execute()
+    public SentMessage Execute()
     {
         string Result = default;
         foreach(var Entry in Commander.Get().Descriptions)
         {
             Result += "." + Entry.Key + ": " + Entry.Value + "\n";
         }
-        return Result;
+        return new SentMessage() { Text = Result };
     }
 
     public override bool OnReady()

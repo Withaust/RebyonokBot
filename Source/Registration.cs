@@ -14,6 +14,7 @@ class Registration
         Core.Register<Vk>();
 
         // Processors
+        Core.Register<Photos>();
         Core.Register<MessageReciever>();
         Core.Register<Commander>();
         Core.Register<MessageSender>();
@@ -23,6 +24,6 @@ class Registration
         Core.Register<Help>();
         Core.Register<Eblan>();
         Core.Register<TestImage>(true);
-
+        Core.Register<Parnishka>();
     }
 }

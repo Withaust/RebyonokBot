@@ -8,6 +8,13 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Model.RequestParams;
 
+public class SentMessage
+{
+    public string Text = null;
+    public MediaAttachment Attachment = null;
+    public ReadOnlyCollection<MediaAttachment> Attachments = null;
+}
+
 public class MessageSender : INode<MessageSender>
 {
     private VkApi Api;
@@ -118,6 +125,29 @@ public class MessageSender : INode<MessageSender>
             RandomId = GD.Randi(),
             Attachments = new MediaAttachment[] { Attachment }
         };
+        Api.Messages.Send(sendParams);
+    }
+
+    public void SendMessage(SentMessage Message)
+    {
+        sendParams = new MessagesSendParams()
+        {
+            ChatId = Credentials.Get().Fields.ChatId,
+            RandomId = GD.Randi(),
+        };
+
+        if (Message.Text != null)
+        {
+            sendParams.Message = ParseMessage(Message.Text);
+        }
+        if (Message.Attachment != null)
+        {
+            sendParams.Attachments = new MediaAttachment[] { Message.Attachment };
+        }
+        if (Message.Attachments != null)
+        {
+            sendParams.Attachments = Message.Attachments;
+        }
         Api.Messages.Send(sendParams);
     }
 
