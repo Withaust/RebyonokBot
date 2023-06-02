@@ -11,8 +11,12 @@ config_version=4
 [application]
 
 config/name="RebyonokBot"
-run/main_scene="res://Core.tscn"
+run/main_scene="res://Main.tscn"
 config/icon="res://icon.png"
+
+[autoload]
+
+Core="*res://Core.tscn"
 
 [display]
 

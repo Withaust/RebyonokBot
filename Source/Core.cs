@@ -18,7 +18,9 @@ public class Core : Node
     public Dictionary<Type, INodeEvents> SystemsDict;
     public List<INodeEvents> SystemsList;
 
-    public Event<CoreExceptionType, Exception> OnException;
+    private int ExceptionCounter = 0;
+    private int MaxExceptionCount = 3;
+    public Event<CoreExceptionType, Exception> OnException  { get; private set; }
 
     public string[] Wakeup = { "Да я здесь!", "Да всем здесь я привет!", "Я проснулся!", "Да я проснулся да!", "Я здесь!", "Всем привет!", "Сука встал!" };
     public string[] Shutdown = { "Gracefully уснул...", "Всё я сплю...", "Пошёл в макдоналдс и уснул...", "Я сплю...", "Zzzz...", "Всем пока...", "В пизду, срать пора..." };
@@ -48,13 +50,21 @@ public class Core : Node
             }
             catch (Exception Exception)
             {
-                if (Exception is VkNet.Exception.CaptchaNeededException)
+                if (Exception is VkNet.Exception.CaptchaNeededException || Exception is VkNet.Exception.RateLimitReachedException)
                 {
                     int SleepingTime = (int)GD.RandRange(5000.0, 15000.0);
-                    GD.Print("Got capcha, sleeping for " + SleepingTime + "ms and retrying");
+                    GD.Print("Got rated, sleeping for " + SleepingTime + "ms and retrying");
                     gotCapcha = true;
                     SysThread.Sleep(SleepingTime);
                     return;
+                }
+                else
+                {
+                    ExceptionCounter++;
+                    if (ExceptionCounter > MaxExceptionCount)
+                    {
+                        GetTree().Quit(1);
+                    }
                 }
                 OnException.Invoke(CoreExceptionType.OnReady, Exception);
             }
@@ -78,11 +88,19 @@ public class Core : Node
         }
         catch (Exception Exception)
         {
-            if (Exception is VkNet.Exception.CaptchaNeededException)
+            if (Exception is VkNet.Exception.CaptchaNeededException || Exception is VkNet.Exception.RateLimitReachedException)
             {
-                GD.Print("Got capcha, restarting...");
+                GD.Print("Got rated, restarting...");
                 GetTree().Quit(1);
                 return;
+            }
+            else
+            {
+                ExceptionCounter++;
+                if (ExceptionCounter > MaxExceptionCount)
+                {
+                    GetTree().Quit(1);
+                }
             }
             OnException.Invoke(CoreExceptionType.OnProcess, Exception);
         }
@@ -105,7 +123,10 @@ public class Core : Node
         }
         catch (Exception Exception)
         {
-            OnException.Invoke(CoreExceptionType.OnShutdown, Exception);
+            if (ExceptionCounter < MaxExceptionCount)
+            {
+                OnException.Invoke(CoreExceptionType.OnShutdown, Exception);
+            }
         }
         if (OS.ExitCode != 0)
         {
@@ -114,18 +135,13 @@ public class Core : Node
         MessageSender.Get().SendMessage(Shutdown[(int)GD.RandRange(0, Shutdown.Length)]);
     }
 
-    public void Register<T>(bool LoadScene = false) where T : Node, INodeEvents, new()
+    public void Register<T>() where T : Node, INodeEvents, new()
     {
         T NewSystem = new T();
         SystemsDict[NewSystem.GetType()] = NewSystem;
         SystemsList.Add(NewSystem);
         NewSystem.Name = typeof(T).Name;
         AddChild(NewSystem);
-        if (LoadScene)
-        {
-            PackedScene NewScene = ResourceLoader.Load<PackedScene>("res://Scenes/" + typeof(T).Name + ".tscn");
-            NewSystem.AddChild(NewScene.Instance());
-        }
         if (!NewSystem.OnReady())
         {
             GD.PushError(typeof(T).Name + " failed to execute OnReady");

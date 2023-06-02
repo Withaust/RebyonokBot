@@ -18,7 +18,7 @@ public class MessageReciever : INode<MessageReciever>
     private VkApi Api;
     private LongPollServerResponse PollServer;
 
-    public Event<RecievedMessage> OnMessage;
+    public Event<RecievedMessage> OnMessage { get; private set; }
 
     public override bool OnReady()
     {

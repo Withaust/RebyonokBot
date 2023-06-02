@@ -71,9 +71,9 @@ public class MessageSender : INode<MessageSender>
         {
             return "�";
         }
-        else if (Message.Length > 1000)
+        else if (Message.Length > 2048)
         {
-            return Message.Substring(0, 1000);
+            return Message.Substring(0, 2048);
         }
         else
         {

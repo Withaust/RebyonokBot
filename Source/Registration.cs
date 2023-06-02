@@ -12,6 +12,7 @@ class Registration
         Core.Register<Version>();
         Core.Register<Credentials>();
         Core.Register<Vk>();
+        Core.Register<Scenes>();
 
         // Processors
         Core.Register<Photos>();
@@ -23,7 +24,7 @@ class Registration
         // Commands
         Core.Register<Help>();
         Core.Register<Eblan>();
-        Core.Register<TestImage>(true);
+        Core.Register<TestImage>();
         Core.Register<Parnishka>();
     }
 }

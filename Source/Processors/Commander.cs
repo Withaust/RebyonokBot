@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using VkNet.Model;
 
 public class Cmd : Attribute
@@ -58,7 +59,7 @@ public class Commander : INode<Commander>
     private Dictionary<string, Tuple<CommmandEntry, List<Type>>> Commands;
     private Dictionary<string, string> Shortcuts;
     public Dictionary<string, string> Descriptions { get; private set; }
-    public Event<string> OnParseFail;
+    public Event<string> OnParseFail { get; private set; }
 
     public override bool OnReady()
     {
@@ -91,7 +92,7 @@ public class Commander : INode<Commander>
 
         foreach (var Method in Reflector.GetAttributedMethods(typeof(Cmd)))
         {
-            if (Method.Item2.ReturnType != typeof(SentMessage)) { continue; }
+            if (Method.Item2.ReturnType != typeof(SentMessage) && Method.Item2.ReturnType != typeof(Task<SentMessage>)) { continue; }
             Cmd Cmd = (Cmd)Method.Item2.GetCustomAttribute(typeof(Cmd)); if (Cmd == null) { continue; }
             CmdArgs Args = (CmdArgs)Method.Item2.GetCustomAttribute(typeof(CmdArgs)); if (Args == null) { continue; }
             CmdShort Short = (CmdShort)Method.Item2.GetCustomAttribute(typeof(CmdShort)); if (Short == null) { continue; }
@@ -217,10 +218,17 @@ public class Commander : INode<Commander>
 
         if (Entry.Item2 == null)
         {
-            SentMessage Result = (SentMessage)Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), null);
-            if (Result != null && Result != default)
+            object Result = Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), null);
+            if (Result != null)
             {
-                MessageSender.Get().SendMessage(Result);
+                if (Result is Task<SentMessage> Async)
+                {
+                    Async.ContinueWith((i) => { MessageSender.Get().SendMessage(i.Result); });
+                }
+                else if (Result is SentMessage Blocking)
+                {
+                    MessageSender.Get().SendMessage(Blocking);
+                }
             }
             return false;
         }
@@ -275,10 +283,17 @@ public class Commander : INode<Commander>
 
         if (Valid)
         {
-            SentMessage Result = (SentMessage)Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), ParsedObjects.ToArray());
-            if (Result != null && Result != default)
+            object Result = Entry.Item1.Base.Invoke(Core.Instance.Get(Entry.Item1.Invokator), ParsedObjects.ToArray());
+            if (Result != null)
             {
-                MessageSender.Get().SendMessage(Result);
+                if (Result is Task<SentMessage> Async)
+                {
+                    Async.ContinueWith((i) => { MessageSender.Get().SendMessage(i.Result); });
+                }
+                else if (Result is SentMessage Blocking)
+                {
+                    MessageSender.Get().SendMessage(Blocking);
+                }
             }
         }
         else

@@ -1,24 +1,27 @@
 using Godot;
-using System;
+using System.Threading.Tasks;
 
 public class TestImage : INode<TestImage>
 {
-    Control CurrentControl;
-
-    public async void Save()
+    [Cmd("test")]
+    [CmdArgs(null)]
+    [CmdShort("t")]
+    [CmdHelp("Генератор тестов")]
+    public async Task<SentMessage> Execute()
     {
-        await ToSignal(VisualServer.Singleton, "frame_post_draw");
-        Image Image = GetViewport().GetTexture().GetData();
-        Image.FlipY();
+        Scenes Scenes = Scenes.Get();
+        Scenes.LoadScene("TestImage");
+        Label TopLabel = Scenes.CurrentScene.GetNode<Label>("TextureRect/VBoxContainer/Label");
+        TopLabel.Text = GD.Randf().ToString();
+        Label BottomLabel = Scenes.CurrentScene.GetNode<Label>("TextureRect/VBoxContainer/Label2");
+        BottomLabel.Text = GD.Randf().ToString();
+        Image Image = await Scenes.Render();
         Image.SavePng("test.png");
+        return new SentMessage{ Text = "Лови", Attachment = Photos.Get().GroupChat.Upload("test.png")};
     }
 
     public override bool OnReady()
     {
-        CurrentControl = GetNode<Control>("TestImage");
-        OS.WindowSize = CurrentControl.RectSize;
-        GetViewport().RenderTargetClearMode = Viewport.ClearMode.OnlyNextFrame;
-        //CallDeferred(nameof(Save));
         return true;
     }
 
@@ -29,7 +32,7 @@ public class TestImage : INode<TestImage>
 
     public override bool OnShutdown()
     {
-        
+
         return true;
     }
 }

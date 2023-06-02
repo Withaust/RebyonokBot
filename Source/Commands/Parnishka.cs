@@ -3,7 +3,6 @@ class Parnishka : INode<Eblan>
 {
     [Cmd("parniska")]
     [CmdArgs(null)]
-    // vvv Different languages vvv
     [CmdShort("p", "парнишка", "ребёнок")]
     [CmdHelp("Генератор парнишек")]
     public SentMessage Execute()

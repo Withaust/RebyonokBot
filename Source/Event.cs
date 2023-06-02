@@ -26,12 +26,17 @@ public class Event<X1>
         }
     }
 
-    ~Event()
+    public void Clear()
     {
         for (int i = 0; i < Subscriptions.Count; i++)
         {
             Subscriptions.RemoveAt(i);
         }
+    }
+
+    ~Event()
+    {
+        Clear();
     }
 }
 
@@ -60,12 +65,17 @@ public class Event<X1, X2>
         }
     }
 
-    ~Event()
+    public void Clear()
     {
         for (int i = 0; i < Subscriptions.Count; i++)
         {
             Subscriptions.RemoveAt(i);
         }
+    }
+
+    ~Event()
+    {
+        Clear();
     }
 }
 
@@ -94,12 +104,17 @@ public class Event<X1, X2, X3>
         }
     }
 
-    ~Event()
+    public void Clear()
     {
         for (int i = 0; i < Subscriptions.Count; i++)
         {
             Subscriptions.RemoveAt(i);
         }
+    }
+
+    ~Event()
+    {
+        Clear();
     }
 }
 
@@ -128,12 +143,17 @@ public class Event<X1, X2, X3, X4>
         }
     }
 
-    ~Event()
+    public void Clear()
     {
         for (int i = 0; i < Subscriptions.Count; i++)
         {
             Subscriptions.RemoveAt(i);
         }
+    }
+
+    ~Event()
+    {
+        Clear();
     }
 }
 
@@ -162,12 +182,17 @@ public class Event<X1, X2, X3, X4, X5>
         }
     }
 
-    ~Event()
+    public void Clear()
     {
         for (int i = 0; i < Subscriptions.Count; i++)
         {
             Subscriptions.RemoveAt(i);
         }
+    }
+
+    ~Event()
+    {
+        Clear();
     }
 }
 
@@ -196,11 +221,16 @@ public class Event<X1, X2, X3, X4, X5, X6>
         }
     }
 
-    ~Event()
+    public void Clear()
     {
         for (int i = 0; i < Subscriptions.Count; i++)
         {
             Subscriptions.RemoveAt(i);
         }
+    }
+
+    ~Event()
+    {
+        Clear();
     }
 }

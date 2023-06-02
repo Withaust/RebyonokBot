@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 public class Logger : INode<Logger>
 {
-    public Event<string> OnError;
+    public Event<string> OnError { get; private set; }
 
     private DateTime Launch;
 
@@ -52,22 +52,22 @@ public class Logger : INode<Logger>
         {
             case CoreExceptionType.OnReady:
                 {
-                    Result = "OnReady got an exception:\n";
+                    Result = "OnReady got an exception ";
                     break;
                 }
             default:
             case CoreExceptionType.OnProcess:
                 {
-                    Result = "OnProcess got an exception:\n";
+                    Result = "OnProcess got an exception ";
                     break;
                 }
             case CoreExceptionType.OnShutdown:
                 {
-                    Result = "OnShutdown got an exception:\n";
+                    Result = "OnShutdown got an exception ";
                     break;
                 }
         }
-        Result += Exception.Message + "\n" + Exception.StackTrace;
+        Result += Exception.GetType().FullName + "\n" + Exception.Message + "\n" + Exception.StackTrace;
         Error(Result);
         return true;
     }
