@@ -123,7 +123,7 @@ public class Core : Node
         AddChild(NewSystem);
         if (LoadScene)
         {
-            PackedScene NewScene = ResourceLoader.Load<PackedScene>("res://Systems/" + typeof(T).Name + ".tscn");
+            PackedScene NewScene = ResourceLoader.Load<PackedScene>("res://Scenes/" + typeof(T).Name + ".tscn");
             NewSystem.AddChild(NewScene.Instance());
         }
         if (!NewSystem.OnReady())
