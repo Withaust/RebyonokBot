@@ -1,12 +1,44 @@
 using Godot;
 using System;
 using System.IO;
+using System.Collections.Generic;
 using SysFile = System.IO.File;
 
-public class Credentials : ISystem<Credentials>
+public class CredentialsFields
+{
+	public string Token;
+	public long GroupId;
+	public long UserId;
+	public long ChatId;
+	public HashSet<long> Admins;
+	public int Fps;
+	public long SglypaId;
+}
+
+public class Credentials : INode<Credentials>
 {
 	public string CredentialsFile = "CREDENTIALS.json";
-	public Godot.Collections.Dictionary Fields { get; private set; }
+	private Godot.Collections.Dictionary GodotFields;
+	public CredentialsFields Fields { get; private set; }
+
+	public void Deserialize()
+	{
+		Fields = new CredentialsFields()
+		{
+			Token = (string)GodotFields["Token"],
+			GroupId = Convert.ToInt64((string)GodotFields["GroupId"]),
+			UserId = Convert.ToInt64((string)GodotFields["UserId"]),
+			ChatId = Convert.ToInt64((string)GodotFields["ChatId"]),
+			Fps = Convert.ToInt32((string)GodotFields["Fps"]),
+			SglypaId = Convert.ToInt64((string)GodotFields["SglypaId"]),
+		};
+		Fields.Admins = new HashSet<long>();
+
+		foreach(var Admin in (Godot.Collections.Array)GodotFields["Admins"])
+		{
+			Fields.Admins.Add(Convert.ToInt64((string)Admin));
+		}
+	}
 
 	public override bool OnReady()
 	{
@@ -24,8 +56,9 @@ public class Credentials : ISystem<Credentials>
 			return false;
 		}
 
-		Fields = (Godot.Collections.Dictionary)ParseResult.Result;
-		Engine.TargetFps = Convert.ToInt32((string)Fields["fps"]);
+		GodotFields = (Godot.Collections.Dictionary)ParseResult.Result;
+		Deserialize();
+		Engine.TargetFps = Fields.Fps;
 		return true;
 	}
 

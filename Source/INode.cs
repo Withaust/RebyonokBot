@@ -1,13 +1,13 @@
 using Godot;
 
-public interface ISystemEvents
+public interface INodeEvents
 {
     bool OnReady();
     bool OnProcess(float Delta);
     bool OnShutdown();
 }
 
-public abstract class ISystem<T> : Node, ISystemEvents where T : Node
+public abstract class INode<T> : Node, INodeEvents where T : Node
 {
     public abstract bool OnReady();
     public abstract bool OnProcess(float Delta);

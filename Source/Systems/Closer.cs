@@ -6,7 +6,7 @@ using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
-public class Closer : ISystem<Logger>
+public class Closer : INode<Closer>
 {
     public static int Port = 49898;
 

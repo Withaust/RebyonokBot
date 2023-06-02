@@ -15,20 +15,20 @@ public class Core : Node
 {
     public static Core Instance { get; private set; }
 
-    public Dictionary<Type, ISystemEvents> SystemsDict;
-    public List<ISystemEvents> SystemsList;
+    public Dictionary<Type, INodeEvents> SystemsDict;
+    public List<INodeEvents> SystemsList;
 
     public Event<CoreExceptionType, Exception> OnException;
 
-    public string[] WakeUp = { "Да я здесь!", "Да всем здесь я привет!", "Я проснулся!", "Да я проснулся да!", "Я здесь!", "Всем привет!", "Сука встал!" };
-
+    public string[] Wakeup = { "Да я здесь!", "Да всем здесь я привет!", "Я проснулся!", "Да я проснулся да!", "Я здесь!", "Всем привет!", "Сука встал!" };
+    public string[] Shutdown = { "Gracefully уснул...", "Всё я сплю...", "Пошёл в макдоналдс и уснул...", "Я сплю...", "Zzzz...", "Всем пока...", "В пизду, срать пора..." };
 
     public override void _Ready()
     {
         Instance = this;
 
-        SystemsDict = new Dictionary<Type, ISystemEvents>();
-        SystemsList = new List<ISystemEvents>();
+        SystemsDict = new Dictionary<Type, INodeEvents>();
+        SystemsList = new List<INodeEvents>();
         OnException = new Event<CoreExceptionType, Exception>();
 
         bool gotCapcha = false;
@@ -40,11 +40,11 @@ public class Core : Node
             {
                 if (!registered)
                 {
-                    AllSystems.Register();
+                    Registration.AddAll();
                 }
                 registered = true;
                 Logger.Get().Log("RebyonokBot is now fully operational");
-                Vk.Get().SendMessage(WakeUp[(int)GD.RandRange(0, WakeUp.Length)]);
+                MessageSender.Get().SendMessage(Wakeup[(int)GD.RandRange(0, Wakeup.Length)]);
             }
             catch (Exception Exception)
             {
@@ -69,7 +69,7 @@ public class Core : Node
         {
             for (int i = 0; i < SystemsList.Count; i++)
             {
-                ISystemEvents Target = SystemsList[i];
+                INodeEvents Target = SystemsList[i];
                 if (!Target.OnProcess(Delta))
                 {
                     GD.PushError(Target.GetType().Name + " failed to execute OnDelta");
@@ -94,7 +94,7 @@ public class Core : Node
         {
             for (int i = SystemsList.Count - 1; i >= 0; i--)
             {
-                ISystemEvents Target = SystemsList[i];
+                INodeEvents Target = SystemsList[i];
                 if (!Target.OnShutdown())
                 {
                     GD.PushError(Target.GetType().Name + " failed to execute OnShutdown");
@@ -111,10 +111,10 @@ public class Core : Node
         {
             return;
         }
-        Vk.Get().SendMessage("В пизду, срать пора.");
+        MessageSender.Get().SendMessage(Shutdown[(int)GD.RandRange(0, Shutdown.Length)]);
     }
 
-    public void Register<T>(bool LoadScene = false) where T : Node, ISystemEvents, new()
+    public void Register<T>(bool LoadScene = false) where T : Node, INodeEvents, new()
     {
         T NewSystem = new T();
         SystemsDict[NewSystem.GetType()] = NewSystem;
@@ -130,5 +130,15 @@ public class Core : Node
         {
             GD.PushError(typeof(T).Name + " failed to execute OnReady");
         }
+    }
+
+    public INodeEvents Get(Type Target)
+    {
+        if (!SystemsDict.ContainsKey(Target))
+        {
+            GD.PushError("Core failed to find node by type of " + Target.Name);
+            return null;
+        }
+        return SystemsDict[Target];
     }
 }

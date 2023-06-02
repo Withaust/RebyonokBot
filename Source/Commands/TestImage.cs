@@ -1,7 +1,7 @@
 using Godot;
 using System;
 
-public class TestImage : ISystem<TestImage>
+public class TestImage : INode<TestImage>
 {
     Control CurrentControl;
 
@@ -18,7 +18,7 @@ public class TestImage : ISystem<TestImage>
         CurrentControl = GetNode<Control>("TestImage");
         OS.WindowSize = CurrentControl.RectSize;
         GetViewport().RenderTargetClearMode = Viewport.ClearMode.OnlyNextFrame;
-        CallDeferred(nameof(Save));
+        //CallDeferred(nameof(Save));
         return true;
     }
 

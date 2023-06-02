@@ -2,7 +2,7 @@ using Godot;
 using System;
 using System.Diagnostics;
 
-public class Logger : ISystem<Logger>
+public class Logger : INode<Logger>
 {
     public Event<string> OnError;
 

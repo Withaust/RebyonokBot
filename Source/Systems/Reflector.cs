@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-public class Reflector : ISystem<Reflector>
+public class Reflector : INode<Reflector>
 {
     private Dictionary<string, Assembly> Assemblies;
     private Dictionary<string, Type> NamedTypes;
@@ -12,7 +12,7 @@ public class Reflector : ISystem<Reflector>
     public override bool OnReady()
     {
         Assemblies = new Dictionary<string, Assembly>();
-        NamedTypes  = new Dictionary<string, Type>();
+        NamedTypes = new Dictionary<string, Type>();
         ActualTypes = new Dictionary<Type, string>();
         AttributedMethods = new Dictionary<Type, List<Tuple<Type, MethodInfo>>>();
 
@@ -22,16 +22,14 @@ public class Reflector : ISystem<Reflector>
         {
             string CurrentName = Entry.GetName().Name;
 
-            if (CurrentName.StartsWith("System")
-            || CurrentName.StartsWith("mscorlib")
-            || CurrentName.StartsWith("RCNG_6"))
+            //if (CurrentName.StartsWith("System")
+            //|| CurrentName.StartsWith("mscorlib")
+            //|| CurrentName.StartsWith("RebyonokBot"))
             {
                 Assemblies[CurrentName] = Entry;
                 AddTypes(Assemblies[CurrentName]);
             }
         }
-
-        AddType("System.Int64[]", typeof(long[]));
 
         return true;
     }
@@ -46,55 +44,43 @@ public class Reflector : ISystem<Reflector>
         return true;
     }
 
-    public Assembly GetAssembly(string PluginID)
+    public Assembly GetAssembly(string AssemblyName)
     {
-        if (Assemblies.ContainsKey(PluginID))
+        if (!Assemblies.ContainsKey(AssemblyName))
         {
-            return Assemblies[PluginID];
-        }
-        else
-        {
-            Logger.Get().Error("Tried to access not registered assembly " + PluginID);
+            Logger.Get().Error("Tried to access not registered assembly " + AssemblyName);
             return null;
         }
+        return Assemblies[AssemblyName];
     }
 
     public string GetType(Type Target)
     {
-        if (ActualTypes.ContainsKey(Target))
-        {
-            return ActualTypes[Target];
-        }
-        else
+        if (!ActualTypes.ContainsKey(Target))
         {
             Logger.Get().Error("Tried to access not registered type " + Target.FullName);
             return null;
         }
+        return ActualTypes[Target];
     }
 
     public Type GetType(string Target)
     {
-        if (NamedTypes.ContainsKey(Target))
-        {
-            return NamedTypes[Target];
-        }
-        else
+        if (!NamedTypes.ContainsKey(Target))
         {
             Logger.Get().Error("Tried to access not registered type " + Target);
             return null;
         }
+        return NamedTypes[Target];
     }
 
     public List<Tuple<Type, MethodInfo>> GetAttributedMethods(Type AttributeType)
     {
-        if (AttributedMethods.ContainsKey(AttributeType))
-        {
-            return AttributedMethods[AttributeType];
-        }
-        else
+        if (!AttributedMethods.ContainsKey(AttributeType))
         {
             return null;
         }
+        return AttributedMethods[AttributeType];
     }
 
     private void AddType(string Key, Type Type)
@@ -129,10 +115,9 @@ public class Reflector : ISystem<Reflector>
     {
         foreach (var Type in TargetAssembly.GetTypes())
         {
-            if (Type.Namespace != null && (Type.IsClass || (Type.IsValueType && !Type.IsEnum)))
+            if (Type.IsClass || (Type.IsValueType && !Type.IsEnum))
             {
-                string Key = Type.FullName;
-                AddType(Key, Type);
+                AddType(Type.FullName, Type);
             }
         }
     }

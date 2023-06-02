@@ -1,7 +1,7 @@
 using Godot;
 using System.Diagnostics;
 
-public class Version : ISystem<Version>
+public class Version : INode<Version>
 {
     public string Commit { get; private set; }
 

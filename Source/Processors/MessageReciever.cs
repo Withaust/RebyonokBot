@@ -6,18 +6,25 @@ using VkNet.Model;
 using VkNet.Model.Attachments;
 using VkNet.Model.RequestParams;
 
-public class MessageInput : ISystem<MessageInput>
+public class RecievedMessage
+{
+    public long FromId;
+    public string Text;
+    public ReadOnlyCollection<Attachment> Attachments;
+}
+
+public class MessageReciever : INode<MessageReciever>
 {
     private VkApi Api;
     private LongPollServerResponse PollServer;
 
-    public Event<long, string, ReadOnlyCollection<Attachment>> OnMessage;
+    public Event<RecievedMessage> OnMessage;
 
     public override bool OnReady()
     {
         Api = Vk.Get().Api;
         PollServer = Api.Messages.GetLongPollServer(true);
-        OnMessage = new Event<long, string, ReadOnlyCollection<Attachment>>();
+        OnMessage = new Event<RecievedMessage>();
 
         return true;
     }
@@ -39,16 +46,21 @@ public class MessageInput : ISystem<MessageInput>
             return true;
         }
 
-        foreach(var Message in Poll?.Messages)
+        foreach (var Message in Poll?.Messages)
         {
+            long MessageFromId = Message.FromId.GetValueOrDefault();
             // Prevent from dispatching our own messages into the infinite loop
-            if(Message.FromId.GetValueOrDefault() == Convert.ToInt64((string)Credentials.Get().Fields["user_id"]))
+            if (MessageFromId == Credentials.Get().Fields.UserId)
             {
                 continue;
             }
-            OnMessage.Invoke(Message.FromId.GetValueOrDefault(), Message.Text, Message.Attachments);
-            Vk.Get().SendMessage(Message.FromId.ToString() + ": " + Message.Text);
-            Logger.Get().Log(Message.Text);
+            OnMessage.Invoke(new RecievedMessage
+            {
+                FromId = MessageFromId,
+                Text = Message.Text,
+                Attachments = Message.Attachments
+            });
+            Logger.Get().Log(MessageFromId + ": " + Message.Text);
         }
 
         return true;
