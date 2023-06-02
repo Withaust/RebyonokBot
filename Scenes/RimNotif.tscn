@@ -27,3 +27,5 @@ custom_fonts/font = ExtResource( 2 )
 text = "The enemy outpost Criminal's Cliff has been destroyed.
 You have 1 day to collect items before your colonists reform the caravan.
 This was the last base of The Owls, which means the faction does not exist anymore."
+autowrap = true
+clip_text = true
