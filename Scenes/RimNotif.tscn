@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://Textures/RimNotif.png" type="Texture" id=1]
+[ext_resource path="res://Fonts/arial.tres" type="DynamicFont" id=2]
+
+[node name="RimNotif" type="Control"]
+margin_right = 803.0
+margin_bottom = 654.0
+
+[node name="Background" type="TextureRect" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+texture = ExtResource( 1 )
+expand = true
+__meta__ = {
+"_edit_use_anchors_": true
+}
+
+[node name="Text" type="Label" parent="."]
+margin_left = 50.0
+margin_top = 57.0
+margin_right = 752.0
+margin_bottom = 518.0
+custom_colors/font_color = Color( 0.839216, 0.839216, 0.839216, 1 )
+custom_constants/line_spacing = 19
+custom_fonts/font = ExtResource( 2 )
+text = "The enemy outpost Criminal's Cliff has been destroyed.
+You have 1 day to collect items before your colonists reform the caravan.
+This was the last base of The Owls, which means the faction does not exist anymore."

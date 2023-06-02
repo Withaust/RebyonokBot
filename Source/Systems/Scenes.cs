@@ -6,11 +6,9 @@ public class Scenes : INode<Scenes>
     private Vector2 DefaultWindowSize;
 
     public Control CurrentScene { get; private set; }
-    public Event<Image> OnRenderFinish { get; private set; }
 
     public override bool OnReady()
     {
-        OnRenderFinish = new Event<Image>();
         DefaultWindowSize = OS.WindowSize;
         OS.WindowPosition = default;
         return true;

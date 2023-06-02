@@ -26,5 +26,6 @@ class Registration
         Core.Register<Eblan>();
         Core.Register<TestImage>();
         Core.Register<Parnishka>();
+        Core.Register<RimNotif>();
     }
 }
