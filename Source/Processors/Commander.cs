@@ -63,7 +63,7 @@ public class Commander : INode<Commander>
 
     public override bool OnReady()
     {
-        CommandRegex = new Regex("^\\.(.*?) (.*?)$", RegexOptions.Multiline);
+        CommandRegex = new Regex("^\\.(.*?) (.*?)$", RegexOptions.Singleline);
         Commands = new Dictionary<string, Tuple<CommmandEntry, List<Type>>>();
         Shortcuts = new Dictionary<string, string>();
         Descriptions = new Dictionary<string, string>();

@@ -69,7 +69,7 @@ public class MessageSender : INode<MessageSender>
     {
         if (Message == null || string.IsNullOrEmpty(Message) || string.IsNullOrWhiteSpace(Message))
         {
-            return "�";
+            return "□";
         }
         else if (Message.Length > 2048)
         {
